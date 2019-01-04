@@ -1,0 +1,112 @@
+type Query {
+    users(query: String): [User!]!
+    posts(query: String): [Post!]!
+    me: User!
+    you: String!
+    grades: [Int!]!
+    greeting(name: String, position: String): String!
+    add(numbers: [Float!]!): Float!
+    post: Post!
+    comments: [Comment!]!
+}
+
+type Mutation {
+    createUser(data: createUserInput!): AuthPayload!
+    login(data: LoginUserInput!): AuthPayload!
+    deleteUser: User!
+    updateUser(data: updateUserInput!): User!
+    createPost(data: createPostInput!): Post!
+    updatePost(id: ID!, data: updatePostInput!): Post!
+    deletePost(id: ID!): Post!
+    createComment(data: createCommentInput!): Comment!
+    deleteComment(id: ID!): Comment!
+    updateComment(id: ID!, data: updateCommentInput!): Comment!
+}
+
+input LoginUserInput {
+    password: String!
+    email: String!
+}
+
+type AuthPayload {
+    user: User!
+    token: String!
+}
+
+type Subscription {
+    comment(postID: ID!): CommentSubscriptionPayload!
+    post: PostSubscriptionPayload!
+}
+
+input createUserInput {
+    name: String!
+    email: String!
+    password: String!
+}
+
+input updateUserInput {
+    name: String
+    email: String
+}
+
+input updateCommentInput {
+    text: String
+}
+
+input updatePostInput {
+    title: String
+    body: String
+    published: Boolean
+}
+
+input createPostInput {
+    title: String!
+    body: String!
+    published: Boolean!
+}
+
+input createCommentInput {
+    text: String!
+    postedOn: ID!
+}
+
+type User {
+    id: ID!
+    name: String!
+    password: String!
+    email: String!
+    posts: [Post!]!
+    comments: [Comment!]!
+}
+
+type Post {
+    id: ID!
+    title: String!
+    body: String!
+    published: Boolean!
+    author: User!
+    comments: [Comment!]!
+}
+
+type Comment {
+    id: ID!
+    text: String!
+    postedOn: Post!
+    authoredBy: User!
+}
+
+enum MutationType {
+    CREATED
+    UPDATED
+    DELETED
+}
+
+type PostSubscriptionPayload {
+    mutation: MutationType!
+    node: Post
+}
+
+type CommentSubscriptionPayload {
+    mutation: MutationType!
+    node: Comment
+}
